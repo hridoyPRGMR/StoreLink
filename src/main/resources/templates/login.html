@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Login</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100 bg-light">
+	<div class="card p-4" style="width: 100%; max-width: 400px;">
+		<h3 class="text-center mb-2">Login</h3>
+		<form th:action="@{/cms/login}" method="post">
+			<div class="mb-2">
+				<label for="username" class="form-label">Username</label>
+				<input type="text" class="form-control" id="username" name="username" placeholder="Enter username"
+					required>
+			</div>
+			<div class="mb-2">
+				<label for="password" class="form-label">Password</label>
+				<input type="password" class="form-control" id="password" name="password" placeholder="Enter password"
+					required>
+			</div>
+			<div class="d-grid">
+				<button type="submit" class="btn btn-primary">Login</button>
+			</div>
+		</form>
+
+		<div class="my-2">
+			<div th:if="${param.error}" class="alert alert-danger">Invalid username or password.</div>
+			<div th:if="${param.logout}" class="alert alert-success">You have been logged out successfully.</div>
+			<div th:if="${param.expired}" class="alert alert-warning">Your session has expired. Please log in again.</div>
+			<div th:if="${param.invalid}" class="alert alert-warning">Your session is invalid. Please log in again.
+			</div>
+		</div>
+
+	</div>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

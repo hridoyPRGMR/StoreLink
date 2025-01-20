@@ -5,8 +5,8 @@
     <title>CMS</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="./css/bootstrap.min.css" rel="stylesheet">
-    <link href="./css/sidebars.css" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/sidebars.css" rel="stylesheet">
     <style>
         .bd-placeholder-img {
             font-size: 1.125rem;
@@ -61,7 +61,10 @@
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                             <li><a href="#" class="link-light rounded">Profile</a></li>
                             <li><a href="#" class="link-light rounded">Settings</a></li>
-                            <li><a href="#" class="link-light rounded">Sign out</a></li>
+							<form th:action="@{/cms/logout}" method="post" style="display: none;" id="logoutForm"></form>
+							<li>
+							    <a href="#" class="link-light rounded" onclick="document.getElementById('logoutForm').submit(); return false;">Sign out</a>
+							</li>
                         </ul>
                     </div>
                 </li>
@@ -112,7 +115,7 @@
         });
     </script>
 
-    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
