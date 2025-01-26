@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>CMS</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/sidebars.css" rel="stylesheet">
+    <link href="/css/select2.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .select2-container {
+            z-index: 2050;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="d-flex" style="height: 100vh;">
+        <!-- Sidebar -->
+        <div class="flex-shrink-0 p-3 bg-dark" style="width: 250px;" id="sidebar">
+            <a href="/cms/dashboard" style="background-color: inherit;"
+                class="d-flex align-items-center pb-3 mb-3 link-light text-decoration-none border-bottom">
+                <span class="fs-5 fw-semibold">StoreLink</span>
+            </a>
+            <ul class="list-unstyled ps-0">
+
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        data-bs-target="#dashboard-collapse" aria-expanded="false">
+                        Dashboard
+                    </button>
+                    <div class="collapse" id="dashboard-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a th:href="@{/cms/dashboard}" class="link-light rounded">Dashboard-1</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li sec:authorize="hasAuthority('USERS')" class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        data-bs-target="#user-collapse" aria-expanded="false">
+                        User Management
+                    </button>
+                    <div class="collapse" id="user-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li sec:authorize="hasAuthority('CREATE_USER')"><a th:href="@{/cms/user/create}" class="link-light rounded">Create User</a></li>
+                            <li><a th:href="@{/cms/user/users}" class="link-light rounded">Users</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li sec:authorize="hasAuthority('PERMISSION')" class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        data-bs-target="#permission-collapse" aria-expanded="false">
+                        Permission
+                    </button>
+                    <div class="collapse" id="permission-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li sec:authorize="hasAuthority('CREATE_PERMISSION')"><a th:href="@{/cms/permission/create}" class="link-light rounded">Create Permission</a></li>
+                            <li><a th:href="@{/cms/permission/permissions}" class="link-light rounded">Permission List</a></li>
+                        </ul>
+                    </div>
+                </li>
+
+                <!-- <li class="mb-1" th:each="menu, iterStat : ${menus}">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        th:data-bs-target="'#menu-collapse-' + ${iterStat.index}" aria-expanded="false">
+                        <span th:text="${menu.name}"></span>
+                    </button>
+                    <div class="collapse" th:id="'menu-collapse-' + ${iterStat.index}" th:if="${menu.subMenus != null}">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small"
+                            th:each="submenu : ${menu.subMenus}">
+                            <li>
+                                <a th:href="${submenu.url}" class="link-light rounded" th:data-url="${submenu.url}"
+                                    th:text="${submenu.name}">
+                                    Submenu
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li> -->
+                <li class="border-top my-3"></li>
+                <li class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        data-bs-target="#account-collapse" aria-expanded="false">
+                        Account
+                    </button>
+                    <div class="collapse" id="account-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="#" class="link-light rounded">Profile</a></li>
+                            <li><a href="#" class="link-light rounded">Settings</a></li>
+                            <form th:action="@{/cms/logout}" method="post" style="display: none;" id="logoutForm">
+                            </form>
+                            <li>
+                                <a href="#" class="link-light rounded"
+                                    onclick="document.getElementById('logoutForm').submit(); return false;">Sign out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <main class="container-fluid p-4  overflow-auto" id="content-area">
+            <div class="content" style="width: 100%;">
+                <!-- Load the specified content fragment dynamically -->
+                <div th:replace="~{${pageContent} :: content}"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/select2.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // get the current path
+            let currentPath = window.location.pathname;
+
+            console.log(currentPath);
+
+            // select all menu items
+            let menuItems = document.querySelectorAll('#sidebar a');
+
+            // loop through all menu items and check if their href matches the current path
+            menuItems.forEach(function (menuItem) {
+                // if the current path contains the menu item's href, add the 'active' class
+                if (currentPath.includes(menuItem.getAttribute('href'))) {
+                    menuItem.classList.add('active');
+                    menuItem.classList.add('show');
+
+                    // get the parent button for the submenu to open the collapse
+                    let parentCollapse = menuItem.closest('.collapse');
+                    if (parentCollapse) {
+                        parentCollapse.classList.add('show');
+
+                        // find the parent button and set aria-expanded to true
+                        let parentButton = parentCollapse.previousElementSibling;
+                        if (parentButton && parentButton.hasAttribute('aria-expanded')) {
+                            parentButton.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                }
+            });
+
+
+            // check if there is a success message
+            let successMessageElement = document.getElementById('successMessage');
+            if (successMessageElement) {
+                setTimeout(function () {
+                    successMessageElement.style.display = 'none';
+                }, 5000);
+            }
+
+            let errorElement = document.getElementById('error');
+            if (errorElement) {
+                setTimeout(function () {
+                    errorElement.style.display = 'none';
+                }, 5000);
+            }
+
+
+
+        });
+
+        $('#permissions').select2({
+            placeholder: "Select",
+            allowClear: true,
+            width: '100%' 
+        });
+
+    </script>
+</body>
+</html>

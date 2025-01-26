@@ -91,3 +91,15 @@ main {
 
 .fw-semibold { font-weight: 600; }
 .lh-tight { line-height: 1.25; }
+
+/* Highlight active menu link */
+#sidebar a.active {
+    background-color: #007bff; /* Change to the desired color */
+    color: white; /* Text color when active */
+}
+
+/* Optionally, add a hover effect for the active menu item */
+#sidebar a.active:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+

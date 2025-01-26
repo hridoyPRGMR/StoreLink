@@ -7,9 +7,8 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 @Configuration
 public class WebConfig {
 
-	 @Bean
-	    public HttpSessionEventPublisher httpSessionEventPublisher() {
-	        return new HttpSessionEventPublisher();
-	    }
-	
+	@Bean
+	public HttpSessionEventPublisher httpSessionEventPublisher() {
+	    return new HttpSessionEventPublisher();
+	}
 }

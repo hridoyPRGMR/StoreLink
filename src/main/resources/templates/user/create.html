@@ -1,0 +1,54 @@
+<!-- permission.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<body>
+	<div class="row mb-5 shadow p-3 rounded">
+		<h3>Create User</h3>
+		<hr>
+		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" id="successMessage"></div>
+		<div th:if="${error}" class="alert alert-danger" th:text="${error}" id="error"></div>
+		<form th:action="@{/cms/user/create}" method="post" th:object="${user}">
+			<div class="row mb-2">
+				<div class="col-md-6">
+					<label for="name">Name <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" th:field="*{name}" placeholder="Enter full name">
+					<div th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
+						class="text-danger"></div>
+				</div>
+				<div class="col-md-6">
+					<label for="username">Username<span class="text-danger">*</span></label>
+					<input type="text" class="form-control" th:field="*{username}" placeholder="Enter username">
+					<div th:if="${#fields.hasErrors('username')}" th:errorclass="error" th:errors="*{username}"
+						class="text-danger"></div>
+				</div>
+			</div>
+			<div class="row mb-2">
+				<div class="col-md-6">
+					<label for="email">Email<span class="text-danger">*</span></label>
+					<input type="email" class="form-control" th:field="*{email}" placeholder="Enter email">
+					<div th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}"
+						class="text-danger"></div>
+				</div>
+				<div class="col-md-6">
+					<label for="phone">Phone</label>
+					<input type="text" class="form-control" th:field="*{phone}" placeholder="Enter phone number">
+					<div th:if="${#fields.hasErrors('phone')}" th:errorclass="error" th:errors="*{phone}"
+						class="text-danger"></div>
+				</div>
+			</div>
+			<div class="row mb-2">
+				<div class="col-md-6">
+					<label for="password">Password<span class="text-danger">*</span></label>
+					<input type="password" class="form-control" th:field="*{password}" placeholder="Enter password">
+					<div th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"
+						class="text-danger"></div>
+				</div>
+				<div class="col-md-6" style="margin-top: 22px;">
+					<button type="submit" class="btn btn-md btn-primary">Create</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

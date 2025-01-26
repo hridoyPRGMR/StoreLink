@@ -1,6 +1,8 @@
 package com.storelink.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -22,11 +24,24 @@ public class UserPrincipal implements UserDetails{
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return user
-				.getRoles()
+		
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		
+		authorities.addAll(user.getRoles()
 				.stream()
 				.map(role-> new SimpleGrantedAuthority(role.getName()))
-				.collect(Collectors.toList());
+				.collect(Collectors.toList()));
+		
+		if(user.getRoles().stream().anyMatch(role-> role.getName().equals("ROLE_ADMIN"))) {
+			authorities.addAll(user.getPermissions().stream()
+				.map(permission-> new SimpleGrantedAuthority(permission.getPermission()))
+				.collect(Collectors.toList())
+			);
+		}
+		
+		System.out.println(authorities);
+
+		return authorities;
 	}
 
 	@Override

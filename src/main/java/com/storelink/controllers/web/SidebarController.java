@@ -1,6 +1,5 @@
 package com.storelink.controllers.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,14 +9,15 @@ import com.storelink.pages.MenuService;
 
 @Controller
 @RequestMapping("/cms")
-public class SidebarController {
+public class SidebarController extends BaseController {
 
-    @Autowired
-    private MenuService menuService;
+    public SidebarController(MenuService menuService) {
+		super(menuService);
+	}
 
     @GetMapping("/dashboard")
     public String loadIndexPage(Model model) {
-        model.addAttribute("menus", menuService.getMenus());       
-        return "index"; 
+    	System.out.println("Hello");
+        return getPageContent(model,"dashboard");
     }
 }

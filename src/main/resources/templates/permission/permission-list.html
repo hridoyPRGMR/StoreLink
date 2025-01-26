@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<body>
+	<div class="row">
+		<h3>Permissions</h3>
+		<hr>
+		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" id="successMessage">
+		</div>
+		<div th:if="${error}" class="alert alert-danger" th:text="${error}" id="error"></div>
+		<table class="table table-striped table-hover" >
+			<thead>
+			<tr>
+				<th>Id</th>
+				<th>Permission</th>
+				<th style="text-align: right;">Action</th>
+			</tr>
+			</thead>
+			<tbody>
+				<tr th:each="permission : ${permissions}">
+					<td th:text="${permission.id}"></td>
+					<td th:text="${permission.permission}"></td>
+					<td style="text-align: right;">
+						<a sec:authorize="hasAuthority('EDIT_PERMISSION')" class="btn btn-sm btn-outline-secondary"
+							th:href="@{/cms/permission/edit/{id}(id=${permission.id})}">Edit</a>
+						<a sec:autorize="hasAuthority('DELETE_PERMISSION')" class="btn btn-sm btn-outline-danger"
+							th:href="@{/cms/permission/delete/{id}(id=${permission.id})}">Delete</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+</body>
+
+</html>
