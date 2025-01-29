@@ -82,6 +82,19 @@
                     </div>
                 </li>
 
+                <li  class="mb-1">
+                    <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
+                        data-bs-target="#category-collapse" aria-expanded="false">
+                        Category
+                    </button>
+                    <div class="collapse" id="category-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a th:href="@{/cms/category/create}" class="link-light rounded">Create Catgeory</a></li>
+                            <li><a th:href="@{/cms/category/categories}" class="link-light rounded">Catgory List</a></li>
+                        </ul>
+                    </div>
+                </li>
+
                 <!-- <li class="mb-1" th:each="menu, iterStat : ${menus}">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                         th:data-bs-target="'#menu-collapse-' + ${iterStat.index}" aria-expanded="false">

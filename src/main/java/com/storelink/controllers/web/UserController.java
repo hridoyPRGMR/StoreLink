@@ -20,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.storelink.dto.UserDto;
 import com.storelink.model.Permission;
 import com.storelink.model.User;
-import com.storelink.pages.MenuService;
 import com.storelink.services.PermissionService;
 import com.storelink.services.UserService;
 
@@ -35,8 +34,7 @@ public class UserController extends BaseController {
 	private UserService userServ;
 	private PermissionService permissionService;
 
-	public UserController(MenuService menuService,UserService userServ,PermissionService permissionService) {
-		super(menuService);
+	public UserController(UserService userServ,PermissionService permissionService) {
 		this.userServ=userServ;
 		this.permissionService=permissionService;
 	}

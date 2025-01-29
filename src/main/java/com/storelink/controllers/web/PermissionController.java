@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.storelink.dto.PermissionDto;
 import com.storelink.model.Permission;
-import com.storelink.pages.MenuService;
 import com.storelink.services.PermissionService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +25,8 @@ public class PermissionController extends BaseController {
 
 	private final PermissionService perServ;
 
-	public PermissionController(PermissionService perServ, MenuService menuService) {
-		super(menuService);
+	public PermissionController(PermissionService perServ) {
+		super();
 		this.perServ = perServ;
 	}
 
