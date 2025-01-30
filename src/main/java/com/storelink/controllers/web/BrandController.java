@@ -74,7 +74,7 @@ public class BrandController extends BaseController{
 		@RequestParam(value = "page",defaultValue = "0") int page,
 		@RequestParam(value = "size",defaultValue = "10") int size
     ){
-        Page<Brand> brands = brandServ.getAllBrands(page,size,searchTerm);
+        Page<Brand> brands = brandServ.getAllPaginatedBrands(page,size,searchTerm);
         model.addAttribute("brands",brands.getContent());
 
         model.addAttribute("currentPage", page);

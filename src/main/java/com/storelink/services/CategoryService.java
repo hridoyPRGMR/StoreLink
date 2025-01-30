@@ -66,6 +66,8 @@ public class CategoryService {
         categoryRep.delete(category);
     }
 
-   
+    public List<Category> getAllCategories(){
+        return categoryRep.findAll();
+    }
 
 }

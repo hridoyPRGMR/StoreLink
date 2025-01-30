@@ -1,5 +1,7 @@
 package com.storelink.services;
 
+import java.util.List;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,7 +56,7 @@ public class BrandService {
         return brand;
     }
 
-    public Page<Brand> getAllBrands(int page, int size, String searchTerm) {
+    public Page<Brand> getAllPaginatedBrands(int page, int size, String searchTerm) {
         
         PageRequest pageable = PageRequest.of(page,size);
     
@@ -87,4 +89,7 @@ public class BrandService {
         brandRep.save(brand);
     }
     
+    public List<Brand> getAllBrands(){
+        return brandRep.findAll();
+    }
 }
