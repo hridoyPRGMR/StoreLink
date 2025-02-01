@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.storelink.constants.ProductConstants;
 import com.storelink.dto.ProductDto;
 import com.storelink.services.BrandService;
@@ -56,9 +55,6 @@ public class ProductController extends BaseController {
     ){
 
         if(res.hasErrors()){
-
-            System.out.println(res.getAllErrors());
-
             model.addAttribute("categories", categoryServ.getAllCategories());
             model.addAttribute("brands", brandServ.getAllBrands());
 
@@ -69,9 +65,7 @@ public class ProductController extends BaseController {
 
         try{
             productServ.saveProduct(req);
-            System.out.println("Product");
-            System.out.println(req);
-            redirect.addFlashAttribute("succssMessage","Product created successfully");
+            redirect.addFlashAttribute("successMessage","Product created successfully");
         }
         catch(Exception e){
             System.out.println(e.getMessage());
