@@ -1,43 +1,59 @@
 package com.storelink.model;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import lombok.Data;
-
 @Data
-@Document(collection = "products")
+@Entity
+@Table(name = "products")
 public class Product {
-    
-    @Id
-    private String id;
-    private String name;
-    private int categoryId;
-    private int brandId;
-    private String description;
-    private List<String>images;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 255)
+    private String name;
+
+    @ManyToOne
+    @JoinColumn(name="category_id",nullable = false)
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id",nullable = false)
+    private Brand brand;
+
+    @Column(length = 1000)
+    private String description;
+
+    @ElementCollection
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "image_url", nullable = false)
+    private List<String> images;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "variation_id", referencedColumnName = "id",nullable = false)
     private Variation variation;
 
-    private long createdBy;
-    private long updatedBy;
+    @Column(nullable = false)
+    private Long createdBy;
 
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+    private Long updatedBy;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     @PrePersist
-    protected void onCreate(){
-        this.createdAt = LocalDate.now();
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    protected void onUpdate(){
-        this.updatedAt = LocalDate.now();
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
-
 }

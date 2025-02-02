@@ -1,41 +1,35 @@
 package com.storelink.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
+@Entity
+@Table(name = "attributes")
 public class Attribute {
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true, nullable = false, length = 50)
     private String sku;
+
+    @Column(nullable = false, length = 255)
     private String value;
+
+    @Column(nullable = false)
     private Double price;
 
-    public Attribute(){}
+    @ManyToOne
+    @JoinColumn(name = "variation_id", nullable = false)
+    private Variation variation;
 
-    public Attribute(String sku,String value,Double price){
-        this.value=value;
-        this.sku=sku;
-        this.price=price;
-    }
+    public Attribute() {}
 
-    public String getSku() {
-        return sku;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setSku(String sku) {
+    public Attribute(String sku, String value, Double price) {
         this.sku = sku;
-    }
-
-    public void setValue(String value) {
         this.value = value;
-    }
-
-    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -43,5 +37,4 @@ public class Attribute {
     public String toString() {
         return "Attribute [sku=" + sku + ", value=" + value + ", price=" + price + "]";
     }
-
 }

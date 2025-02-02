@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 
 import com.storelink.constants.ProductConstants;
 import com.storelink.dto.ProductDto;
+import com.storelink.exceptions.ResourceNotFoundException;
 import com.storelink.model.Product;
 import com.storelink.services.BrandService;
 import com.storelink.services.CategoryService;
@@ -16,6 +17,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -79,11 +81,11 @@ public class ProductController extends BaseController {
         return "redirect:/cms/product/create";
     }
 
-    @GetMapping("path")
+    @GetMapping("/products")
     public String getAllProducts(
-        @RequestParam("categoryId") Integer categoryId,
-        @RequestParam("brandId") Integer brandId,
-        @RequestParam("productName") String productName,
+        @RequestParam(value="categoryId",required=false) Integer categoryId,
+        @RequestParam(value="brandId",required = false) Integer brandId,
+        @RequestParam(value = "productName",required = false) String productName,
         @RequestParam(value = "page",defaultValue = "0") int page,
         @RequestParam(value = "size",defaultValue = "10") int size,
         Model model 
@@ -97,9 +99,30 @@ public class ProductController extends BaseController {
         model.addAttribute("productName", productName);
         model.addAttribute("categories", categoryServ.getAllCategories());
         model.addAttribute("brands", brandServ.getAllBrands());
+        
+        model.addAttribute("productName", productName);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
 
         return getPageContent(model, "product/product-list");
     }
     
+    @GetMapping("/view/{id}")
+    public String viewProductPage(@PathVariable int id,Model model,RedirectAttributes redirect) {
+        
+        try{
+            model.addAttribute("product", productServ.findById(id));
+            return getPageContent(model, "product/view");
+        }
+        catch(ResourceNotFoundException e){
+            redirect.addFlashAttribute("error","Product not found");
+        }
+        catch(Exception e){
+            redirect.addFlashAttribute("error", "Unexpected error occured");
+        }
+
+        return "redirect:/cms/product/products";
+    }
     
+
 }
