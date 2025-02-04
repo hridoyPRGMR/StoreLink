@@ -17,10 +17,8 @@ import com.storelink.exceptions.ResourceNotFoundException;
 import com.storelink.model.Brand;
 import com.storelink.services.BrandService;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
+<body>
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/cms/product/products}">Products</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product Name</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-1 text-primary">Edit Product</h2>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" id="successMessage">
+        </div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}" id="error"></div>
+        <hr>
+
+        <form th:action="@{/cms/product/update/{productId}(productId=${productId})}" th:object="${product}" method="post"
+            enctype="multipart/form-data" class="needs-validation" novalidate>
+
+            <!-- Product Information -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Product Name</label>
+                    <input type="text" id="productName" class="form-control" th:field="*{name}"
+                        th:value="${product.name}" required>
+                    <div class="text-danger small" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label fw-bold">Product Images</label>
+                    <input type="file" class="form-control" name="images" accept="image/*" multiple>
+                </div>
+                <div class="col-md-1 text-center">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#imageModal" ;
+                        class="btn btn-md btn-outline-info mx-auto" style="margin-top: 30px;">Images</button>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Category</label>
+                    <select id="category" class="form-select" th:field="*{categoryId}" required>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Brand</label>
+                    <select id="brand" class="form-select" th:field="*{brandId}" required>
+                        <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Description</label>
+                    <textarea class="form-control" th:field="*{description}" rows="2"></textarea>
+                </div>
+            </div>
+
+            <hr class="mt-4">
+
+            <!-- Variations -->
+            <h5 class="text-secondary"><i class="fas fa-tags"></i> Variations</h5>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Attribute Type</label>
+                    <select th:field="*{variation.attributeType}" class="form-select" id="attributeType">
+                        <option th:each="type:${attributeTypes}" th:value="${type}" th:text="${type}"></option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Unit</label>
+                    <select th:field="*{variation.unit}" class="form-select" id="unit">
+                        <option th:each="unit:${units}" th:text="${unit}" th:value="${unit}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="mt-4">
+
+            <!-- Attributes Section -->
+            <h5 class="text-secondary"><i class="fas fa-list"></i> Attributes</h5>
+            <div id="attributeContainer">
+                <div th:each="attribute, stat : ${product.variation.attributes}"
+                    class="attribute-row row mb-2 align-items-center">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control sku-field"
+                            th:field="*{variation.attributes[__${stat.index}__].sku}" placeholder="SKU" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control attribute-value"
+                            th:field="*{variation.attributes[__${stat.index}__].value}" placeholder="Value" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" class="form-control"
+                            th:field="*{variation.attributes[__${stat.index}__].price}" placeholder="Price" step="0.01"
+                            required>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <button type="button" class="btn btn-danger btn-sm remove-attribute">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-success mt-2" id="addAttribute">
+                <i class="fas fa-plus-circle"></i> Add Attribute
+            </button>
+
+            <hr class="mt-4">
+
+            <!-- Submit Button -->
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save"></i> Save Product
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal fade" id="imageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form th:action="@{/cms/product/delete/image/{id}/product(id=${productId})}" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Delete Images</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-flex flex-wrap">
+                            <div th:each="image : ${productImages}" class="position-relative m-2">
+                                <img class="img-fluid rounded" style="max-width: 80px; max-height: 80px;"
+                                    th:src="@{'/cms/images/product/' + ${image.imageUrl}}" alt="Product Image">
+                                <div class="form-check position-absolute top-0 end-0">->
+                                    <input type="checkbox" class="form-check-input delete-image-checkbox"
+                                        name="imagesToDelete" th:value="${image.imageUrl}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Delete Selected</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const container = document.getElementById("attributeContainer");
+            let attributeIndex = document.querySelectorAll('.attribute-row').length;
+
+            // Add attribute row dynamically
+            document.getElementById("addAttribute").addEventListener("click", function () {
+                let container = document.getElementById("attributeContainer");
+                let attributeHtml = `
+                    <div class="row mb-2 align-items-center attribute-row">
+                        <div class="col-md-3">
+                            <input type="text" class="form-control sku-field" name="variation.attributes[${attributeIndex}].sku" placeholder="SKU" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="form-control attribute-value" name="variation.attributes[${attributeIndex}].value" placeholder="Value" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="number" class="form-control" name="variation.attributes[${attributeIndex}].price" placeholder="Price" step="0.01" required>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <button type="button" class="btn btn-danger btn-sm remove-attribute">Remove</button>
+                        </div>
+                    </div>`;
+                container.insertAdjacentHTML("beforeend", attributeHtml);
+                attributeIndex++;
+            });
+
+            // Remove attribute row
+            container.addEventListener("click", function (event) {
+                if (event.target.closest(".remove-attribute")) {
+                    event.target.closest(".attribute-row").remove();
+                }
+            });
+
+            // Generate SKU when input fields change
+            document.getElementById('productName').addEventListener("input", generateSku);
+            container.addEventListener("input", generateSku);
+
+            function generateSku() {
+                let productName = document.getElementById('productName').value.trim();
+                let category = document.getElementById('category').selectedOptions[0]?.textContent.trim();
+                let brand = document.getElementById('brand').selectedOptions[0]?.textContent.trim();
+                let attributeType = document.getElementById('attributeType').value.trim();
+
+                // Update SKU for each attribute row
+                document.querySelectorAll(".attribute-row").forEach(row => {
+                    let attributeValue = row.querySelector(".attribute-value").value.trim();
+
+                    if (!productName || !category || !brand || !attributeType || !attributeValue) {
+                        row.querySelector(".sku-field").value = "";
+                        return;
+                    }
+
+                    let productPart = normalizeString(productName).substring(0, 3);
+                    let categoryPart = normalizeString(category).substring(0, 3);
+                    let brandPart = normalizeString(brand).substring(0, 3);
+                    let attributeTypePart = normalizeString(attributeType).substring(0, 3);
+                    let attributePart = normalizeString(attributeValue).substring(0, 3);
+                    let uniqueCode = Math.floor(1000 + Math.random() * 9000); // 4 digit random number
+
+                    let sku = `${categoryPart}-${brandPart}-${productPart}-${attributeTypePart}-${attributePart}-${uniqueCode}`;
+                    row.querySelector(".sku-field").value = sku;
+                });
+            }
+
+            // Normalize strings by removing special characters, spaces, and making them uppercase
+            function normalizeString(str) {
+                return str.normalize("NFD") // Normalize accents
+                    .replace(/[\u0300-\u036f]/g, "") // Remove accents
+                    .replace(/\s+/g, "-") // Replace spaces with hyphens
+                    .replace(/[^A-Za-z0-9-]/g, "") // Remove special characters
+                    .toUpperCase();
+            }
+
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -28,10 +28,8 @@ public class Product {
     @Column(length = 1000)
     private String description;
 
-    @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url", nullable = false)
-    private List<String> images;
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "variation_id", referencedColumnName = "id",nullable = false)

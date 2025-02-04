@@ -12,7 +12,6 @@ import com.storelink.exceptions.ResourceNotFoundException;
 import com.storelink.model.Brand;
 import com.storelink.repository.BrandRepository;
 
-import jakarta.validation.Valid;
 
 
 @Service

@@ -60,7 +60,7 @@
                             <a th:href="@{/cms/product/update/{id}(id=${product.id})}"
                                 class="btn mx-2 btn-sm btn-outline-secondary">Edit</a>
                             <form th:action="@{delete/{id}(id=${product.id})}" method="post"
-                                onsubmit="return confirm('Are you sure you want to delete this brand?');">
+                                onsubmit="return confirm('Are you sure you want to delete this Product?');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                             </form>
                         </td>

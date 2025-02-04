@@ -2,13 +2,78 @@
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
 
 <body>
-    <div class="card shadow-lg p-4">
-        
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/cms/product/products}">Products</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product Name</li>
+        </ol>
+    </nav>
+
+
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0" th:text="${product.name}">Product Name</h3>
+        </div>
+        <div class="card-body">
+            <!-- Product Images -->
+            <div class="mb-4">
+                <h5>Product Images</h5>
+                <div class="row g-3">
+                    <div class="col-auto" th:each="image : ${images}">
+                        <img class="img-fluid rounded" style="max-width: 80px; max-height: 80px;"
+                            th:src="@{'/cms/images/product/' + ${image.imageUrl}}" alt="Product Image">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <ul class="list-group mb-4">
+                <li class="list-group-item">
+                    <strong>Category:</strong> <span th:text="${product.category.name}">Category Name</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Brand:</strong> <span th:text="${product.brand.name}">Brand Name</span>
+                </li>
+                <li class="list-group-item">
+                    <strong>Description:</strong> <span th:text="${product.description}">Product Description</span>
+                </li>
+            </ul>
+
+            <!-- Variation Details -->
+            <div class="mb-4">
+                <h5>Variation</h5>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Attribute Type:</strong> <span th:text="${product.variation.attributeType}">Attribute
+                            Type</span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Unit:</strong> <span th:text="${product.variation.unit}">Unit</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Attributes -->
+            <div>
+                <h6>Attributes</h6>
+                <div th:each="attribute : ${product.variation.attributes}" class="mb-3">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Value:</strong> <span th:text="${attribute.value}">Value</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Price:</strong> <span th:text="${attribute.price}">Price</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>SKU:</strong> <span th:text="${attribute.sku}">SKU</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-        
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
