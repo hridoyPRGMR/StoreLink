@@ -7,6 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.storelink.constants.ProductConstants;
 import com.storelink.dto.ProductDto;
@@ -18,18 +25,12 @@ import com.storelink.services.ProductService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.RequestParam;
+import lombok.extern.slf4j.Slf4j;
 
 
 
 
+@Slf4j
 @Controller
 @RequestMapping("/cms/product")
 public class ProductController extends BaseController {
@@ -37,12 +38,14 @@ public class ProductController extends BaseController {
     private final ProductService productServ;
     private final CategoryService categoryServ;
     private final BrandService brandServ;
-
+    
     public ProductController(ProductService productServ,CategoryService categoryServ,BrandService brandServ){
         this.productServ = productServ;
         this.categoryServ = categoryServ;
         this.brandServ = brandServ;
     }
+    
+//    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
     @GetMapping("/create")
     public String createProductPage(Model model) {
@@ -79,8 +82,8 @@ public class ProductController extends BaseController {
             redirect.addFlashAttribute("successMessage","Product created successfully");
         }
         catch(Exception e){
-            System.out.println(e.getMessage());
             redirect.addFlashAttribute("error","Failed to create product.");
+            log.error("Failed to create product. Error: {}",e.getMessage(),e);
         }
         
         return "redirect:/cms/product/create";

@@ -18,10 +18,12 @@ import com.storelink.model.Brand;
 import com.storelink.services.BrandService;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-
+@Slf4j
 @Controller
 @RequestMapping("/cms/brand")
 public class BrandController extends BaseController{
@@ -57,10 +59,12 @@ public class BrandController extends BaseController{
                 redirect.addFlashAttribute("successMessage", "Brand created successfully.");
             }
             catch(DataIntegrityViolationException e){
-                model.addAttribute("error", "Brand name already exist");
+            	redirect.addFlashAttribute("error", "Brand name already exist");
+                log.error("Failed to create brand: Error: {}",e.getMessage(),e);
             }
             catch(Exception e){
-                model.addAttribute("error", "Unexpected error occured.");
+            	redirect.addFlashAttribute("error", "Unexpected error occured.");
+                log.error("Failed to create brand: Error: {}",e.getMessage(),e);
             }
 
         return "redirect:/cms/brand/create";

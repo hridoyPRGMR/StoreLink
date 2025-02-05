@@ -3,6 +3,7 @@ package com.storelink.controllers.web;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +16,7 @@ import com.storelink.services.CategoryService;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
-
+@Slf4j
 @Controller
 @RequestMapping("/cms/category")
 public class CategoryController extends BaseController {
@@ -55,8 +57,9 @@ public class CategoryController extends BaseController {
             categoryServ.saveCategory(req);
             redirect.addFlashAttribute("successMessage","Category created successfully.");
         }
-        catch(RuntimeException e){
+        catch(DataIntegrityViolationException e){
             redirect.addFlashAttribute("error","Failed to create category.");
+            log.error("Failed to create category. Error: {}",e.getMessage(),e);
         }
 
         return "redirect:/cms/category/create";
