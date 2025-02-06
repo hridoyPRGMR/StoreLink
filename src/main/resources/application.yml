@@ -6,6 +6,10 @@ server:
       timeout: 5m
 
 spring:
+
+  application:
+    name: StoreLink
+
   datasource:
     url: jdbc:mysql://localhost:3306/storelink
     username: root
@@ -24,6 +28,26 @@ spring:
   config:
     import:
       - optional:file:.env[.properties]
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shaon42hridoy@gmail.com
+    password: bneineggtbpipanu
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
+image:
+  upload:
+   dir: uploads
 
 
 #logging:

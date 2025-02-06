@@ -2,6 +2,7 @@ package com.storelink.services;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.storelink.dto.UserDto;
+import com.storelink.exceptions.UserNotFoundException;
 import com.storelink.model.Permission;
 import com.storelink.model.User;
 import com.storelink.repository.PermissionRepository;
@@ -31,6 +33,19 @@ public class UserService {
         this.userRep = userRep;
         this.permRep = permRep;
         this.passwordEncoder = new BCryptPasswordEncoder(12);
+    }
+    
+    public boolean emailExist(String email) {    	
+    	return userRep.existsByEmail(email);
+    }
+    
+    public boolean usernameExist(String username) {   	
+    	return userRep.existsByUsername(username);
+    }
+    
+    public User findUserByVerificationToken(String token) {
+        return userRep.findByVerificationToken(token)
+                      .orElseThrow(() -> new UserNotFoundException("User not found for the given token"));
     }
 
     public User saveUser(UserDto userDto,String role){
@@ -74,5 +89,16 @@ public class UserService {
 
         userRep.save(user);
     }
-
+    
+    
+    public boolean verifyUser(String token) {
+    	
+    	User user = findUserByVerificationToken(token);
+    	user.setVerified(true);
+    	user.setVerificationToken(null);
+    	userRep.save(user);
+    	
+    	return true;
+    }
+    
 }

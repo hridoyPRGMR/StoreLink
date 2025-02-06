@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +49,11 @@ public class User {
 	@Column(nullable = false,length=100)
 	private String password;
 
-
+	private boolean verified = false;
+	
+	@Column(length=250)
+	private String verificationToken;
+	
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
@@ -66,6 +71,8 @@ public class User {
     )
     private Set<Permission> permissions = new HashSet<>();
     
-	
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
 }
