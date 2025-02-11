@@ -2,6 +2,7 @@ package com.storelink.controllers.web;
 
 import java.util.Optional;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +31,7 @@ public class PermissionController extends BaseController {
 		this.perServ = perServ;
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PERMISSION')")
 	@GetMapping("/create")
 	public String showCreate(Model model, HttpServletRequest request) {
 		Permission permission = new Permission();
@@ -37,6 +39,7 @@ public class PermissionController extends BaseController {
 		return getPageContent(model, "permission/create");
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PERMISSION')")
 	@PostMapping("/create")
 	public String savePermission(@Valid @ModelAttribute("permissionForm") PermissionDto req,
 			BindingResult bindingResult, Model model) {
@@ -61,6 +64,7 @@ public class PermissionController extends BaseController {
 		return getPageContent(model, "permission/create");
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('PERMISSIONS')")
 	@GetMapping("/permissions")
 	public String getPermissions(Model model) {
 
@@ -69,6 +73,7 @@ public class PermissionController extends BaseController {
 		return getPageContent(model, "permission/permission-list");
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_PERMISSION')")
 	@GetMapping("/edit/{id}")
 	public String updatePermissionForm(@PathVariable Long id, Model model) {
 	    
@@ -86,6 +91,7 @@ public class PermissionController extends BaseController {
 	    return getPageContent(model, "permission/update");
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_PERMISSION')")
 	@PostMapping("/edit/{id}")
 	public String updatePermission(@PathVariable Long id, @Valid @ModelAttribute("permission") PermissionDto req, BindingResult res,
 	        RedirectAttributes redirectAttributes,Model model) {
@@ -107,6 +113,7 @@ public class PermissionController extends BaseController {
 	    return "redirect:/cms/permission/permissions";
 	}
 	
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_PERMISSION')")
 	@GetMapping("/delete/{id}")
 	public String deletePermission(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 		perServ.deleteById(id);

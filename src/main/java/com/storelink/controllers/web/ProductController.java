@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,6 +48,7 @@ public class ProductController extends BaseController {
     
 //    private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PRODUCT')")
     @GetMapping("/create")
     public String createProductPage(Model model) {
 
@@ -61,6 +63,7 @@ public class ProductController extends BaseController {
         return getPageContent(model, "product/create");
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_PRODUCT')")
     @PostMapping("/create")
     public String createProduct(@Valid @ModelAttribute("product") ProductDto req,
         BindingResult res,
@@ -89,6 +92,7 @@ public class ProductController extends BaseController {
         return "redirect:/cms/product/create";
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('PRODUCTS')")
     @GetMapping("/products")
     public String getAllProducts(
         @RequestParam(value="categoryId",required=false) Integer categoryId,
@@ -135,6 +139,7 @@ public class ProductController extends BaseController {
         return "redirect:/cms/product/products";
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_PRODUCT')")
     @GetMapping("/update/{id}")
     public String updateProductPage(@PathVariable long id,RedirectAttributes redirect,Model model) {
         
@@ -159,28 +164,7 @@ public class ProductController extends BaseController {
         return "redirect:/cms/product/products";
     }
 
-    @PostMapping("/delete/{id}")
-    public String postMethodName(@PathVariable long id,RedirectAttributes redirect) {
-        
-        try{
-            productServ.deleteById(id);
-            redirect.addFlashAttribute("successMessage", "Product deleted sucessfully.");
-        }
-        catch(ResourceNotFoundException e){
-            redirect.addFlashAttribute("error", "Product not found.");
-        }
-        catch(IOException e){
-            redirect.addFlashAttribute("error","Failed to delete product images");
-        }
-        catch(Exception e){
-            redirect.addFlashAttribute("error", "Unexpected error occured.");
-            System.out.println(e.getMessage());
-        }
-        
-        return "redirect:/cms/product/products";
-    }
-    
-    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_PRODUCT')")
     @PostMapping("/update/{productId}")
     public String updateProductHandler(@PathVariable long productId, 
         @Valid @ModelAttribute("product") ProductDto req,
@@ -209,6 +193,31 @@ public class ProductController extends BaseController {
 
         return getPageContent(model, "product/update");
     }
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_PRODUCT')")
+    @PostMapping("/delete/{id}")
+    public String deleteProduct(@PathVariable long id,RedirectAttributes redirect) {
+        
+        try{
+            productServ.deleteById(id);
+            redirect.addFlashAttribute("successMessage", "Product deleted sucessfully.");
+        }
+        catch(ResourceNotFoundException e){
+            redirect.addFlashAttribute("error", "Product not found.");
+        }
+        catch(IOException e){
+            redirect.addFlashAttribute("error","Failed to delete product images");
+        }
+        catch(Exception e){
+            redirect.addFlashAttribute("error", "Unexpected error occured.");
+            System.out.println(e.getMessage());
+        }
+        
+        return "redirect:/cms/product/products";
+    }
+    
+    
+   
 
     @PostMapping("/delete/image/{id}/{folder}")
     public String deleteImages(

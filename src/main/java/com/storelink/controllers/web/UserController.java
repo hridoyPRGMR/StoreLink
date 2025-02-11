@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -65,7 +66,7 @@ public class UserController extends BaseController {
 		 return "redirect:/cms/login?logout";
 	}
 	
-	// @PreAuthorize("hasAuthority('CREATE_TEST')")
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_USER')")
 	@GetMapping("/user/create")
 	public String createUserPage(Model model) {
 		
@@ -75,6 +76,7 @@ public class UserController extends BaseController {
 		return getPageContent(model,"user/create");
 	}
 	
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_USER')")
 	@PostMapping("/user/create")
 	public String createUser(@Valid @ModelAttribute("user") UserDto req,
 			BindingResult res,
@@ -97,6 +99,7 @@ public class UserController extends BaseController {
 		return getPageContent(model,"user/create");
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('USERS')")
 	@GetMapping("/user/users")
 	public String getUsers(Model model,
 			@RequestParam(value = "search",required = false,defaultValue = "") String searchTerm,
@@ -132,6 +135,7 @@ public class UserController extends BaseController {
 		return ResponseEntity.ok(new ApiResponse(true,"User Permissions fetched successfully.", permissions));
 	}
 
+	@PreAuthorize("hasRole('ADMIN') and hasAuthority('ASSIGN_PERMISSION')")
 	@PostMapping("/user/assign-permission")
 	public String assignPermission(@RequestParam("userId") String userId,
 		@RequestParam("permissionsIds[]") List<Long> permissionIds,

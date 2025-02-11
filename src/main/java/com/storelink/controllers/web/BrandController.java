@@ -2,6 +2,7 @@ package com.storelink.controllers.web;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +34,8 @@ public class BrandController extends BaseController{
     public BrandController(BrandService brandServ){
         this.brandServ = brandServ;
     }
-
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_BRAND')")
     @GetMapping("/create")
     public String createBrandPage(Model model){
 
@@ -43,6 +45,7 @@ public class BrandController extends BaseController{
         return getPageContent(model, "brand/create");
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_BRAND')")
     @PostMapping("/create")
     public String createBrand(@Valid @ModelAttribute("brand") BrandDto req,
             BindingResult res,
@@ -69,7 +72,8 @@ public class BrandController extends BaseController{
 
         return "redirect:/cms/brand/create";
     }
-
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('BRANDS')")
     @GetMapping("/brands")
     public String getBrands(Model model,
         @RequestParam(value = "search",required = false,defaultValue = "") String searchTerm,
@@ -86,6 +90,7 @@ public class BrandController extends BaseController{
         return getPageContent(model, "brand/brand-list");
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_BRAND')")
     @GetMapping("/update/{id}")
     public String getMethodName(@PathVariable("id") int id,Model model) {
         
@@ -103,6 +108,7 @@ public class BrandController extends BaseController{
         return getPageContent(model, "brand/update");
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_BRAND')")
     @PostMapping("/update/{id}")
     public String updateBrand(
             @Valid @ModelAttribute("brand") BrandDto req,
@@ -129,10 +135,8 @@ public class BrandController extends BaseController{
     
         return getPageContent(model, "brand/update");
     }
-
     
-    
-    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_BRAND')")
     @PostMapping("/delete/{id}")
     public String deleteBrand(@PathVariable("id") int id,RedirectAttributes redirect){
 

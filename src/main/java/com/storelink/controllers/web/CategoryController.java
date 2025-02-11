@@ -4,6 +4,7 @@ package com.storelink.controllers.web;
 import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,6 +37,7 @@ public class CategoryController extends BaseController {
     }
 
     
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_CATEGORY')")
     @GetMapping("/create")
     public String createCategoryPage(Model model){
 
@@ -44,7 +46,8 @@ public class CategoryController extends BaseController {
 
         return getPageContent(model, "category/create");
     }
-
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CREATE_CATEGORY')")
     @PostMapping("/create")
     public String createCategory(@Valid @ModelAttribute("category") CategoryDto req,
         BindingResult res,Model model,RedirectAttributes redirect){
@@ -65,6 +68,7 @@ public class CategoryController extends BaseController {
         return "redirect:/cms/category/create";
     }
 
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('CATEGORIES')")
     @GetMapping("/categories")
     public String getCategories(Model model){
 
@@ -73,7 +77,8 @@ public class CategoryController extends BaseController {
 
         return getPageContent(model, "category/category-list");
     }
-
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_CATEGORY')")
     @GetMapping("/update/{id}")
     public String updateCategoryPage(@PathVariable Integer id,Model model){
 
@@ -83,7 +88,8 @@ public class CategoryController extends BaseController {
 
         return getPageContent(model, "category/update");
     }
-
+    
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('UPDATE_CATEGORY')")
     @PostMapping("/update/{id}")
     public String updateCategory(@PathVariable Integer id,
                                  @Valid @ModelAttribute("category") CategoryDto req,
@@ -110,6 +116,7 @@ public class CategoryController extends BaseController {
         return "redirect:/cms/category/categories";
     }
     
+    @PreAuthorize("hasRole('ADMIN') and hasAuthority('DELETE_CATEGORY')")
     @PostMapping("/delete/{id}")
     public String deleteCategory(@PathVariable Integer id,RedirectAttributes redirect){
 
