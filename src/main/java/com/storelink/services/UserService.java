@@ -43,6 +43,10 @@ public class UserService {
     	return userRep.existsByUsername(username);
     }
     
+    public User findByUserId(Long id) {
+    	return userRep.findById(id).orElseThrow(()->new UserNotFoundException("User not found with ID: "+id));
+    }
+    
     public User findByUsername(String username) {
     	return userRep.findByUsername(username);
     }
@@ -104,5 +108,10 @@ public class UserService {
     	
     	return true;
     }
+
+	public Set<Permission> getUserPermissions(Long userId) {
+		User user = findByUserId(userId);
+		return user.getPermissions();
+	}
     
 }

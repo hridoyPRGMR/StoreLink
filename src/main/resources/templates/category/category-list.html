@@ -28,9 +28,9 @@
 							View
 						</button>
 
-						<a sec:authorize="hasAuthority('EDIT_PERMISSION')" class="btn btn-sm btn-outline-secondary mx-2"
+						<a sec:authorize="hasAuthority('UPDATE_CATEGORY')" sec:authorize="hasAuthority('EDIT_PERMISSION')" class="btn btn-sm btn-outline-secondary mx-2"
 							th:href="@{/cms/category/update/{id}(id=${category.id})}">Edit</a>
-						<form th:action="@{delete/{id}(id=${category.id})}" method="post"
+						<form sec:authorize="hasAuthority('DELETE_CATEGORY')" th:action="@{delete/{id}(id=${category.id})}" method="post"
 							onsubmit="return confirm('Are you sure you want to delete this category?');">
 							<button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
 						</form>

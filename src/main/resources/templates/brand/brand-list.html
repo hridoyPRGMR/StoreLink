@@ -41,9 +41,9 @@
                                 th:data-description="${brand.description}">
                                 View
                             </button>
-                            <a th:href="@{/cms/brand/update/{id}(id=${brand.id})}"
+                            <a sec:authorize="hasAuthority('UPDATE_BRAND')" th:href="@{/cms/brand/update/{id}(id=${brand.id})}"
                                 class="btn mx-2 btn-sm btn-outline-secondary">Edit</a>
-                            <form th:action="@{delete/{id}(id=${brand.id})}" method="post"
+                            <form sec:authorize="hasAuthority('DELETE_BRAND')" th:action="@{delete/{id}(id=${brand.id})}" method="post"
                                 onsubmit="return confirm('Are you sure you want to delete this brand?');">
                                 <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                             </form>

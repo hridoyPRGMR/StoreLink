@@ -82,7 +82,7 @@
                     </div>
                 </li>
 
-                <li  class="mb-1">
+                <li  class="mb-1" sec:authorize="hasAuthority('CATEGORY')">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                         data-bs-target="#category-collapse" aria-expanded="false">
                         Category
@@ -95,7 +95,7 @@
                     </div>
                 </li>
 
-                <li  class="mb-1">
+                <li  class="mb-1" sec:authorize="hasAuthority('BRANDS')">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                         data-bs-target="#brand-collapse" aria-expanded="false">
                         Brand
@@ -108,14 +108,14 @@
                     </div>
                 </li>
 
-                <li  class="mb-1">
+                <li  class="mb-1" sec:authorize="hasAuthority('PRODUCTS')">
                     <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse"
                         data-bs-target="#product-collapse" aria-expanded="false">
                         Product
                     </button>
                     <div class="collapse" id="product-collapse">
                         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a th:href="@{/cms/product/create}" class="link-light rounded">Create Product</a></li>
+                            <li><a sec:authorize="hasAuthority('CREATE_PRODUCT')" th:href="@{/cms/product/create}" class="link-light rounded">Create Product</a></li>
                             <li><a th:href="@{/cms/product/products}" class="link-light rounded">Product List</a></li>
                         </ul>
                     </div>

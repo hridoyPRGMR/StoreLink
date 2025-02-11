@@ -47,9 +47,9 @@
                         <td th:text="${user.email}"></td>
                         <td th:text="${user.phone}"></td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-outline-primary assign-permission-btn" data-bs-toggle="modal"
+                            <button sec:authorize="hasAuthority('ASSIGN_PERMISSION')" type="button" class="btn btn-sm btn-outline-primary assign-permission-btn" data-bs-toggle="modal"
                                 data-bs-target="#assignPermission" th:data-user-id="${user.id}">Assign Permission</button>
-                            <button class="btn btn-sm btn-outline-secondary">Edit user</buttonn>
+                            <button sec:authorize="hasAuthority('EDIT_USER')" class="btn btn-sm btn-outline-secondary">Edit user</buttonn>
                         </td>
                     </tr>
                 </tbody>
@@ -117,6 +117,34 @@
                 button.addEventListener('click',function(){
                     const userId = button.getAttribute('data-user-id');
                     document.getElementById('userId').value=userId;
+					
+					
+					fetch(`/cms/user/user-permissions/${userId}`) 
+					    .then(response => {
+					        if (!response.ok) {
+					            throw new Error("Network response was not ok " + response.statusText);
+					        }
+					        return response.json();
+					    })
+					    .then(data => {
+					        console.log(data.data);
+							
+							// extract permission IDs from response
+							const userPermissionIds = data.data.map(permission => permission.id);
+							// Select all options in the select element
+							const selectElement = document.getElementById("permissions");
+
+							for (let option of selectElement.options) {
+							    option.selected = userPermissionIds.includes(parseInt(option.value));
+							}
+
+							//using Select2, refresh it
+							$("#permissions").trigger("change");
+					    })
+					    .catch(error => {
+					        console.error("Error fetching data:", error);
+					    });
+					
                 })
             });
         });

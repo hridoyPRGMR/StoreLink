@@ -1,8 +1,10 @@
 package com.storelink.controllers.web;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -11,11 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.storelink.api.response.ApiResponse;
 import com.storelink.dto.UserDto;
 import com.storelink.model.Permission;
 import com.storelink.model.User;
@@ -118,6 +122,15 @@ public class UserController extends BaseController {
 
 		return getPageContent(model, "/user/user-list");
 	}	
+	
+	//ajax request to get user pre assign permissions
+	@GetMapping("/user/user-permissions/{userId}")
+	public ResponseEntity<?> getUserPermissions(@PathVariable("userId") Long userId){
+		
+		Set<Permission> permissions = userServ.getUserPermissions(userId);
+		
+		return ResponseEntity.ok(new ApiResponse(true,"User Permissions fetched successfully.", permissions));
+	}
 
 	@PostMapping("/user/assign-permission")
 	public String assignPermission(@RequestParam("userId") String userId,
