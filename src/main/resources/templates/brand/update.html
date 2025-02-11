@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
 <body>
-	<div class="row mb-5">
-		<h3>Create Brand</h3>
+
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a th:href="@{/cms/brand/brands}">Brands</a>
+			</li>
+			<li class="breadcrumb-item active" aria-current="page" th:text="${brand.name}">Brand Name</li>
+		</ol>
+	</nav>
+
+	<div class="row shadow p-2 pb-3 mb-5">
+		<h3>Update Brand</h3>
 		<hr>
 		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" id="successMessage">
 		</div>
@@ -15,12 +26,13 @@
 					<div th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
 						class="text-danger"></div>
 				</div>
-                <div class="col-md-6">
-                    <label for="description">Description</label>
-                    <textarea rows="3" id="description" class="form-control" th:field="*{description}" placeholder="Enter description here."></textarea>
-                    <div th:if="${#fields.hasErrors('description')}" th:errorclass="error" th:errors="*{description}"
+				<div class="col-md-6">
+					<label for="description">Description</label>
+					<textarea rows="3" id="description" class="form-control" th:field="*{description}"
+						placeholder="Enter description here."></textarea>
+					<div th:if="${#fields.hasErrors('description')}" th:errorclass="error" th:errors="*{description}"
 						class="text-danger"></div>
-                </div>
+				</div>
 				<div class="col-md-2">
 					<button type="submit" class="btn btn-md btn-primary mt-4">Update</button>
 				</div>
@@ -28,4 +40,5 @@
 		</form>
 	</div>
 </body>
+
 </html>

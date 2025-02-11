@@ -1,8 +1,18 @@
 <!-- permission.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+
 <body>
-	<div class="row mb-5">
+
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a th:href="@{/cms/permission/permissions}">Permissions</a>
+			</li>
+		</ol>
+	</nav>
+
+	<div class="row shadow p-3 mb-5">
 		<h3>Update Permission</h3>
 		<hr>
 		<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}" id="successMessage">
@@ -13,8 +23,9 @@
 				<div class="col-md-6">
 					<label for="permission">Permission</label>
 					<input type="text" class="form-control" th:field="*{permission}">
-					<div th:if="${#fields.hasErrors('permission')}" th:errorclass="error" th:errors="*{permission}" class="text-danger"></div>
-	
+					<div th:if="${#fields.hasErrors('permission')}" th:errorclass="error" th:errors="*{permission}"
+						class="text-danger"></div>
+
 				</div>
 				<div class="col-md-6">
 					<button type="submit" class="btn btn-md btn-primary mt-4">Update</button>
@@ -23,4 +34,5 @@
 		</form>
 	</div>
 </body>
+
 </html>
