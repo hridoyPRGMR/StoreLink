@@ -11,15 +11,18 @@ spring:
     name: StoreLink
 
   datasource:
-    url: jdbc:mysql://localhost:3306/storelink
-    username: root
-    password: 
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/storelink
+    username: postgres
+    password: "0110"
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+  properties:
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
 
   data:
     mongodb: 
@@ -29,12 +32,11 @@ spring:
     import:
       - optional:file:.env[.properties]
 
-
   mail:
     host: smtp.gmail.com
     port: 587
-    username: shaon42hridoy@gmail.com
-    password: bneineggtbpipanu
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -54,8 +56,8 @@ image:
 #  level:
 #    root: DEBUG
 
-#logging:
-#  level:
-#    com:
-#      storelink: ERROR
+logging:
+  level:
+    com:
+      storelink: INFO
     

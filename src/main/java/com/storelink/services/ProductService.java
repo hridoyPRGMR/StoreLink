@@ -20,6 +20,7 @@ import com.storelink.model.Attribute;
 import com.storelink.model.Product;
 import com.storelink.model.ProductImage;
 import com.storelink.model.Variation;
+import com.storelink.projection.ProductProjection;
 import com.storelink.repository.AttributeRepository;
 import com.storelink.repository.ProductImageRepository;
 import com.storelink.repository.ProductRepository;
@@ -57,14 +58,37 @@ public class ProductService {
     public Product findById(long id){
         return productRep.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product not found with id: "+id));
     }
+    
+    public List<Product> getProducts(List<Long> productIds){
+    	
+    	if(productIds == null || productIds.isEmpty()) {
+    		throw new IllegalArgumentException("Product IDs list can not be null or empty");
+    	}
+    	
+    	return productRep.findAllById(productIds);
+    }
 
     public Page<Product> getAllPaginatedProducts(Integer categoryId, Integer brandId, String productName, int page,int size){
            
         PageRequest pageable = PageRequest.of(page,size);
-
+        
         Specification<Product> specification = ProductSpecification.filterProducts(categoryId, brandId, productName);
 
+
         return productRep.findAll(specification,pageable);
+    }
+    
+    public Page<ProductProjection> getAllPaginatedProductsForApi(Integer categoryId, Integer brandId, String productName, int page, int size) {
+        
+    	PageRequest pageable = PageRequest.of(page, size);
+    	
+        return productRep.findAllProjected(categoryId, brandId, productName, pageable);
+    }
+    
+    public Page<ProductProjection> getShopProduct(Long shopId,Integer categoryId, Integer brandId, String productName, int page, int size){
+    	
+    	PageRequest pageable = PageRequest.of(page, size); 
+    	return productRep.findShopProduct(shopId,productName,categoryId, brandId,pageable);
     }
 
 

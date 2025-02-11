@@ -1,12 +1,29 @@
 package com.storelink.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "variations")
 public class Variation {
@@ -20,10 +37,13 @@ public class Variation {
 
     @Column(nullable = false, length = 50)
     private String unit;
-
+    
+    @JsonIgnore
+    @JsonManagedReference
     @OneToOne(mappedBy = "variation",cascade = CascadeType.ALL)
     private Product product;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "variation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Attribute> attributes = new ArrayList<>();
 }

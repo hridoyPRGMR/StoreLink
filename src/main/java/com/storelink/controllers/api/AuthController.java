@@ -4,7 +4,6 @@ package com.storelink.controllers.api;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,9 +29,7 @@ import com.storelink.services.JWTService;
 import com.storelink.services.UserService;
 
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -58,6 +55,8 @@ public class AuthController {
 
 	        if (authentication.isAuthenticated()) 
 	        {
+	        	System.out.println("User authenticated.");
+	        	
 	        	Map<String,String> token = new HashMap<>();
 	        	token.put("JwtToken", jwtService.generateToken(req.getUsername()));
 	        	
@@ -72,6 +71,7 @@ public class AuthController {
 	    } catch (AuthenticationException e) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse<>(false,"Authentication failed. Please check your credentials",null));
 	    } catch (Exception e) {
+	    	e.printStackTrace();
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>(false,"An unexpected error occurred. Please try again later",null));
 	    }
 	}
@@ -84,29 +84,15 @@ public class AuthController {
 			return ResponseEntity.badRequest().body("Email already exist.");
 		}
 		
-		try {
-//			emailService.sendVerificationEmail(req.getEmail(), TokenGenerator.generateToken());
-			userService.saveUser(req, "ROLE_USER");
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			log.info("Failed to register user. Error: {}",e.getMessage(),e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to register user");
-		}
-		
+		emailService.sendVerificationEmail(req.getEmail(), TokenGenerator.generateToken());
+//		userService.saveUser(req, "ROLE_USER");
 		return ResponseEntity.status(HttpStatus.OK).body("User Registered successfully");
 	}
 	
 	@GetMapping("/verify")
 	public ResponseEntity<?> verifyEmail(@RequestParam String token) {
-	    try {
-	        userService.verifyUser(token);
-	        return ResponseEntity.ok("User verification successful");
-	    } catch (UserNotFoundException e) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found for the given token");
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while verifying the user");
-	    }
+	     userService.verifyUser(token);
+	     return ResponseEntity.ok("User verification successful");
 	}
 
 	

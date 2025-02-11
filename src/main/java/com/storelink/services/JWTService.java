@@ -1,5 +1,8 @@
 package com.storelink.services;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
@@ -11,7 +14,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,12 +22,22 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTService {
 
+	private static final String SECRET_KEY_PATH = "jwt-secret.key";
     private final String SECRET_KEY;
-
+    
+    
     public JWTService() {
-        // Load the secret key from environment variables or fallback to a generated key
-        String envSecret = System.getenv("JWT_SECRET_KEY");
-        this.SECRET_KEY = StringUtils.hasText(envSecret) ? envSecret : generateSecretKey();
+        String envSecret = getSecretKey();
+        this.SECRET_KEY = envSecret.isEmpty() || envSecret==null ? generateSecretKey() : envSecret;
+    }
+    
+    private String getSecretKey() {
+    	try {
+    		return new String(Files.readAllBytes(Paths.get(SECRET_KEY_PATH))).trim();
+    	}
+    	catch(IOException e) {
+    		throw new RuntimeException("Failed to read JWT secret key file", e);
+    	}
     }
 
     private String generateSecretKey() {
@@ -59,7 +71,7 @@ public class JWTService {
                 .add(claims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+                .expiration(new Date(System.currentTimeMillis() + 60 * 60 *60 * 30))
                 .and()
                 .signWith(getKey())
                 .compact();

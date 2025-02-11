@@ -1,5 +1,7 @@
 package com.storelink.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,6 +23,7 @@ public class Attribute {
     @Column(nullable = false)
     private Double price;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "variation_id", nullable = false)
     private Variation variation;

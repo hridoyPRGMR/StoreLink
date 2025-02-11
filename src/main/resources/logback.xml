@@ -51,7 +51,7 @@
     </logger>
 
     <!-- Independent Logger for Error Logs -->
-    <logger name="com.storelink.controllers" level="ERROR" additivity="false">
+    <logger name="com.storelink" level="ERROR" additivity="false">
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 

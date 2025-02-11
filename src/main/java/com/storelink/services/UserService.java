@@ -43,6 +43,10 @@ public class UserService {
     	return userRep.existsByUsername(username);
     }
     
+    public User findByUsername(String username) {
+    	return userRep.findByUsername(username);
+    }
+    
     public User findUserByVerificationToken(String token) {
         return userRep.findByVerificationToken(token)
                       .orElseThrow(() -> new UserNotFoundException("User not found for the given token"));

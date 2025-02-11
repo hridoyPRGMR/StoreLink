@@ -1,5 +1,6 @@
 .env
 HELP.md
+jwt-secret.key
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
