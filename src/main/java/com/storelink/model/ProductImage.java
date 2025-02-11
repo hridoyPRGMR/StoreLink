@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 
@@ -18,7 +19,8 @@ public class ProductImage{
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator="pi_seq")
+    @SequenceGenerator(name="pi_seq",sequenceName="pi_sequence",allocationSize=1)
     private long id;
     
     @JsonBackReference

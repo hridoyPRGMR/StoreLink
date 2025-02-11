@@ -11,7 +11,8 @@ import lombok.Data;
 public class Attribute {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator="attribute_seq")
+    @SequenceGenerator(name="attribute_seq",sequenceName="attribute_sequence",allocationSize=1)
     private Long id;
 
     @Column(unique = true, nullable = false, length = 50)

@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -18,7 +19,8 @@ import lombok.Data;
 public class Brand {
     
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator="brand_seq")
+    @SequenceGenerator(name="brand_seq",sequenceName="brand_sequence",allocationSize=1)
     private int id;
 
     @Column(nullable=false,unique=true,length=150)
