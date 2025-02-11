@@ -130,9 +130,11 @@ public class ProductController extends BaseController {
             return getPageContent(model, "product/view");
         }
         catch(ResourceNotFoundException e){
+        	log.error("Failed to view product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error","Product not found");
         }
         catch(Exception e){
+        	log.error("Failed to view product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error", "Unexpected error occured");
         }
 
@@ -155,9 +157,11 @@ public class ProductController extends BaseController {
             return getPageContent(model, "product/update");
         }
         catch(ResourceNotFoundException e){
+        	log.error("Failed to update product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error",e.getMessage());
         }
         catch(Exception e){
+        	log.error("update to view product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error","Unexpected error occured.");
         }
         
@@ -187,6 +191,7 @@ public class ProductController extends BaseController {
             redirect.addFlashAttribute("successMessage", "Product updated successfully.");
             return "redirect:/cms/product/products";
         } catch (Exception e) {
+        	log.error("Failed to update product. Error: {}",e.getMessage(),e);
             model.addAttribute("error", "Failed to update product: " + e.getMessage());
             e.printStackTrace();
         }
@@ -203,12 +208,15 @@ public class ProductController extends BaseController {
             redirect.addFlashAttribute("successMessage", "Product deleted sucessfully.");
         }
         catch(ResourceNotFoundException e){
+        	log.error("Failed to delete product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error", "Product not found.");
         }
         catch(IOException e){
+        	log.error("Failed to delete product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error","Failed to delete product images");
         }
         catch(Exception e){
+        	log.error("Failed to delete product. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error", "Unexpected error occured.");
             System.out.println(e.getMessage());
         }
@@ -231,9 +239,11 @@ public class ProductController extends BaseController {
                 productServ.deleteImages(imagesToDelete, folder);
                 redirect.addFlashAttribute("successMessage", "Selected images deleted successfully!");
             } catch (IOException e) {
+            	log.error("Failed to delete images. Error: {}",e.getMessage(),e);
                 redirect.addFlashAttribute("error", "Error deleting images: " + e.getMessage());
             }
             catch(Exception e){
+            	log.error("Failed to delete images. Error: {}",e.getMessage(),e);
                 redirect.addFlashAttribute("error", "Unexpected error occured.");
             }
         } else {

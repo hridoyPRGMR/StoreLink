@@ -30,7 +30,9 @@ import com.storelink.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/cms")
 public class UserController extends BaseController {
@@ -92,6 +94,7 @@ public class UserController extends BaseController {
 			model.addAttribute("successMessage", "User created Successfully.");
 		}
 		catch(RuntimeException e){
+			log.error("Failed to create user. Error: {}",e.getMessage(),e);
 			model.addAttribute("error", "Failed to create User.");
 			System.out.println(e.getMessage());
 		}
@@ -146,6 +149,7 @@ public class UserController extends BaseController {
 			userServ.assignPermission(Long.parseLong(userId), permissionIds);
 			redirect.addFlashAttribute("successMessage","Permission assigned Successfully.");
 		}catch(Exception e){
+			log.error("Failed to assign permission. Error: {}",e.getMessage(),e);
 			redirect.addFlashAttribute("error",e.getMessage());
 		}
 

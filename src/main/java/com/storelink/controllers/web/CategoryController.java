@@ -104,11 +104,15 @@ public class CategoryController extends BaseController {
             categoryServ.updateCategory(req, id);
             redirect.addFlashAttribute("successMessage", "Category updated successfully");
         } 
-        catch (EntityNotFoundException e) {
+        catch (EntityNotFoundException e) 
+        {
+        	log.error("Failed to update category. Error: {}",e.getMessage(),e);
             model.addAttribute("error", "Category not found");
             return getPageContent(model, "category/update");
         } 
-        catch (Exception e) {
+        catch (Exception e) 
+        {
+        	log.error("Failed to update category. Error: {}",e.getMessage(),e);
             model.addAttribute("error", "Failed to update category");
             return getPageContent(model, "category/update");
         }
@@ -125,9 +129,11 @@ public class CategoryController extends BaseController {
             redirect.addFlashAttribute("successMessage","Category deleted successfully.");
         }
         catch(EntityNotFoundException e){
+        	log.error("Failed to delete category. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error","Category not found!!");
         }
         catch(Exception e){
+        	log.error("Failed to delete category. Error: {}",e.getMessage(),e);
             redirect.addFlashAttribute("error","Failed to delete category");
         }
 

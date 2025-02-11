@@ -19,7 +19,9 @@ import com.storelink.services.PermissionService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 @RequestMapping("/cms/permission")
 public class PermissionController extends BaseController {
@@ -58,6 +60,7 @@ public class PermissionController extends BaseController {
 			perServ.save(permission);
 			model.addAttribute("successMessage", "Permission Saved Successfully");
 		} catch (RuntimeException e) {
+			log.error("Failed to create permission. Error: {}",e.getMessage(),e);
 			model.addAttribute("error", "Failed to save permission.");
 		}
 
@@ -107,6 +110,7 @@ public class PermissionController extends BaseController {
 
 	        redirectAttributes.addFlashAttribute("successMessage", "Permission updated successfully");
 	    } catch (RuntimeException e) {
+	    	log.error("Failed to update permission. Error: {}",e.getMessage(),e);
 	        redirectAttributes.addFlashAttribute("error", "Failed to update permission.");
 	    }
 
