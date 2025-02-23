@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import com.storelink.apiresponse.ApiResponse;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,94 +19,61 @@ import lombok.extern.slf4j.Slf4j;
 public class RestExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException ex,
+	public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex,
 			WebRequest request) 
 	{
 		log.error("ResourceNotFoundException: {}",ex.getMessage(),ex);
-		ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
-				request.getDescription(false));
-		return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+		
+		return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null), HttpStatus.NOT_FOUND);
 	}
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorDetails> handleIllegalArgumentException(
+    public ResponseEntity<?> handleIllegalArgumentException(
             IllegalArgumentException ex, WebRequest request) 
     {	
     	log.error("IllegalArgumentException: {}",ex.getMessage(),ex);
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<?> handleConflict(ConflictException ex,WebRequest request)
+    {
+    	log.error("Database Conflict: {}",ex.getMessage(),ex);
+    	return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null),HttpStatus.CONFLICT);
     }
     
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorDetails> handleBadRequestException(
+    public ResponseEntity<?> handleBadRequestException(
             BadRequestException ex, WebRequest request) 
     {
     	log.error("BadRequestException: {}",ex.getMessage(),ex);
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null), HttpStatus.BAD_REQUEST);
     }
     
     @SuppressWarnings("null")
 	@ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorDetails> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
     	
     	log.error("DataIntegrityViolationException: {}",ex.getMessage(),ex);
-    	
-    	String message = "Database integrity violation occurred.";
-    	
-    	if(ex.getRootCause() != null) {
-    		message += " "+ex.getRootCause().getMessage();
-    	}
-    	
-    	ErrorDetails errorDetails = new ErrorDetails(
-    			LocalDateTime.now(),
-    			message,
-    			request.getDescription(false)
-    	);
-    	
-    	return new ResponseEntity<>(errorDetails,HttpStatus.CONFLICT);
+    	return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null),HttpStatus.CONFLICT);
     }
     
     @SuppressWarnings("null")
 	@ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorDetails> handleDataAccessException(
+    public ResponseEntity<?> handleDataAccessException(
             DataAccessException ex, WebRequest request) 
     {
     	log.error("DataAccessException: {}",ex.getMessage(),ex);
-    	
-        String message = "A database error occurred.";
-        if (ex.getRootCause() != null) {
-            message += " " + ex.getRootCause().getMessage();
-        }
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                message,
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
     // Handle all other exceptions
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDetails> handleGlobalException(
+    public ResponseEntity<?> handleGlobalException(
             Exception ex, WebRequest request) 
     {	
     	log.error("Exception: {}",ex.getMessage(),ex);
-    	
-        ErrorDetails errorDetails = new ErrorDetails(
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResponse<>(false, ex.getMessage(), null), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

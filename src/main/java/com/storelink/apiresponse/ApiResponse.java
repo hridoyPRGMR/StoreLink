@@ -1,4 +1,4 @@
-package com.storelink.api.response;
+package com.storelink.apiresponse;
 
 public class ApiResponse<T> {
 	
@@ -6,6 +6,10 @@ public class ApiResponse<T> {
 	private String message;
 	private T data;
 	
+	public ApiResponse() {
+		super();
+	}
+
 	public ApiResponse(boolean success, String message, T data) {
 		super();
 		this.success = success;

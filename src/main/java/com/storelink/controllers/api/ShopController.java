@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.storelink.api.response.ApiResponse;
+import com.storelink.apiresponse.ApiResponse;
 import com.storelink.dto.ShopDto;
 import com.storelink.model.Shop;
 import com.storelink.projection.ProductProjection;
@@ -45,9 +45,9 @@ public class ShopController {
 
 	}
 
-	@PostMapping("/add-products/{shopId}")
-	public ResponseEntity<?> addProducts(@RequestBody List<Long> productIds, @PathVariable Long shopId) {
-		shopServ.addProducts(productIds, shopId);
+	@PostMapping("/add-products")
+	public ResponseEntity<?> addProducts(@RequestBody List<Long> productIds,Authentication authentication) {
+		shopServ.addProducts(productIds,authentication.getName());
 		return ResponseEntity.ok(new ApiResponse<>(true, "Products added successfully.", null));
 	}
 	

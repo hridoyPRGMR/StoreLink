@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.storelink.api.response.ApiResponse;
+import com.storelink.apiresponse.ApiResponse;
 import com.storelink.dto.AuthReq;
 import com.storelink.dto.UserDto;
 import com.storelink.exceptions.UserNotFoundException;
@@ -81,18 +81,18 @@ public class AuthController {
 	public ResponseEntity<?> registerUser(@Valid @RequestBody UserDto req){
 		
 		if(userService.emailExist(req.getEmail())) {
-			return ResponseEntity.badRequest().body("Email already exist.");
+			return ResponseEntity.badRequest().body(new ApiResponse<>(false,"Email already exist.",null));
 		}
 		
-		emailService.sendVerificationEmail(req.getEmail(), TokenGenerator.generateToken());
-//		userService.saveUser(req, "ROLE_USER");
-		return ResponseEntity.status(HttpStatus.OK).body("User Registered successfully");
+//		emailService.sendVerificationEmail(req.getEmail(), TokenGenerator.generateToken());
+		userService.saveUser(req, "ROLE_USER");
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse<>(true,"User Registered successfully",null));
 	}
 	
 	@GetMapping("/verify")
 	public ResponseEntity<?> verifyEmail(@RequestParam String token) {
 	     userService.verifyUser(token);
-	     return ResponseEntity.ok("User verification successful");
+	     return ResponseEntity.ok(new ApiResponse<>(true,"User verification successful",null));
 	}
 
 	

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.storelink.api.response.ApiResponse;
+import com.storelink.apiresponse.ApiResponse;
 import com.storelink.dto.UserDto;
 import com.storelink.model.Permission;
 import com.storelink.model.User;

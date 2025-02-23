@@ -1,6 +1,5 @@
 package com.storelink.services;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.storelink.dto.AddressDto;
 import com.storelink.dto.ShopDto;
+import com.storelink.exceptions.ConflictException;
 import com.storelink.exceptions.ResourceNotFoundException;
 import com.storelink.model.Address;
 import com.storelink.model.Product;
@@ -50,6 +50,9 @@ public class ShopService {
         Shop shop = toEntity(req);
         
         User user = userServ.findByUsername(username);
+        if(user.getShop() != null ) {
+        	throw new ConflictException("Shop already exist for the user.");
+        }
         
         shop.setUser(user);
         shop.setAddress(address);
@@ -57,8 +60,15 @@ public class ShopService {
         return shopRep.save(shop);
     }
     
-    public void addProducts(List<Long> productIds,Long shopId) {
-		Shop shop = findById(shopId);
+    public void addProducts(List<Long> productIds,String username) {
+		
+    	User user = userServ.findByUsername(username);
+    	Shop shop = user.getShop();
+    	
+    	if(shop == null) {
+    		throw new ResourceNotFoundException("Store not exist for the user");
+    	}
+    	
 		List<Product> products = productServ.getProducts(productIds);
 		
 		Set<Product> setOfproduct =  products.stream()
