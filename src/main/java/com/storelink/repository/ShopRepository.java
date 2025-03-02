@@ -12,20 +12,6 @@ import com.storelink.projection.ShopProjection;
 
 @Repository
 public interface ShopRepository extends JpaRepository<Shop, Long> {
-	
-	@Query(value = """
-		    SELECT s.id AS shopId, s.name AS shopName, s.latitude, s.longitude, 
-		           ST_Distance(s.location, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography) AS distance,
-		           a.id AS addressId, a.street, a.city, a.state,a.country, a.postal_code
-		    FROM shop s
-		    JOIN shop_product sp ON s.id = sp.shop_id
-		    JOIN addresses a ON s.address_id = a.id
-		    WHERE sp.product_id = :productId
-		    ORDER BY distance
-		    LIMIT 2
-		""", nativeQuery = true)
-	List<ShopProjection> findNearestShopWithProduct(@Param("latitude") Double latitude,
-		                                        @Param("longitude") Double longitude,
-		                                        @Param("productId") Long productId);
+	                                      
 	
 }

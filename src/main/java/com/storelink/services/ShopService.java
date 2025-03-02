@@ -1,7 +1,10 @@
 package com.storelink.services;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -12,19 +15,27 @@ import org.springframework.stereotype.Service;
 
 import com.storelink.dto.AddressDto;
 import com.storelink.dto.ShopDto;
+import com.storelink.dto.ShopProductDto;
 import com.storelink.exceptions.ConflictException;
 import com.storelink.exceptions.ResourceNotFoundException;
 import com.storelink.model.Address;
+import com.storelink.model.Attribute;
 import com.storelink.model.Product;
 import com.storelink.model.Shop;
+import com.storelink.model.ShopProduct;
 import com.storelink.model.User;
+import com.storelink.model.Variation;
 import com.storelink.projection.ProductProjection;
 import com.storelink.projection.ShopProjection;
 import com.storelink.repository.AddressRepository;
+import com.storelink.repository.AttributeRepository;
+import com.storelink.repository.ShopProductRepository;
 import com.storelink.repository.ShopRepository;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 @Service
 public class ShopService {
 
@@ -32,13 +43,9 @@ public class ShopService {
     private final ShopRepository shopRep;
     private final UserService userServ;
     private final ProductService productServ;
+    private final ShopProductRepository shopProdRep;
+    private final AttributeRepository attributeRep;
 
-    public ShopService(ShopRepository shopRep, AddressRepository addressRep, UserService userServ,ProductService productServ) {
-        this.shopRep = shopRep;
-        this.userServ = userServ;
-        this.addressRep = addressRep;
-        this.productServ = productServ;
-    }
     
     public Shop findById(Long id) {
     	return shopRep.findById(id).orElseThrow(()-> new ResourceNotFoundException("Shop not found with ID: "+id));
@@ -60,23 +67,38 @@ public class ShopService {
         return shopRep.save(shop);
     }
     
-    public void addProducts(List<Long> productIds,String username) {
+    public void addProducts(List<ShopProductDto> req,String username) {
 		
-    	User user = userServ.findByUsername(username);
-    	Shop shop = user.getShop();
+    	Shop shop = userServ.findByUsername(username).getShop();
     	
     	if(shop == null) {
     		throw new ResourceNotFoundException("Store not exist for the user");
     	}
     	
-		List<Product> products = productServ.getProducts(productIds);
-		
-		Set<Product> setOfproduct =  products.stream()
-				.collect(Collectors.toSet());
-		
-		shop.setProducts(setOfproduct);
-		
-		shopRep.save(shop);
+    	List<Long> attributeIds = req.stream().map(ShopProductDto::getAttributeId).collect(Collectors.toList());
+    	List<Attribute> attributes = attributeRep.findAllById(attributeIds);
+    	
+//    	Map attribute IDs to their corresponding Attribute objects
+    	Map<Long,Attribute> attributeMap = attributes.stream().collect(Collectors.toMap(Attribute::getId, Function.identity()));
+    	
+    	List<ShopProduct> shopProducts = new ArrayList<>();
+    	
+    	for(ShopProductDto spd:req) {
+    		Attribute attribute = attributeMap.get(spd.getAttributeId());
+    		  
+            if (attribute == null) {
+                throw new ResourceNotFoundException("Attribute not found for id: " + spd.getAttributeId());
+            }
+            
+    		Product product = Optional.ofNullable(attribute.getVariation())
+    				.map(Variation::getProduct)
+    				.orElseThrow(() -> new ResourceNotFoundException("Product not found for attribute id: " + spd.getAttributeId()));
+    				
+    		 ShopProduct shopProduct = new ShopProduct(shop, product, attribute, spd.getStock());
+    	     shopProducts.add(shopProduct);
+    	}
+    		
+    	shopProdRep.saveAll(shopProducts);
 	}
 
     public Shop toEntity(ShopDto req) {
@@ -129,17 +151,38 @@ public class ShopService {
 	public Page<ProductProjection> getShopProducts(String productName, Integer categoryId, Integer brandId, int page,
 			int size, String username) {
 		
-		User user = userServ.findByUsername(username);
-		Shop shop = user.getShop();
+		Shop shop =  userServ.findByUsername(username).getShop();
 		
 		if(shop!=null) {
 			Long shopId = shop.getId();
-			return productServ.getShopProduct(shopId, categoryId, brandId, productName, page, size);
+			Page<ProductProjection> shopProduct = productServ.getShopProduct(shopId, categoryId, brandId, productName, page, size);
+	
+			
+			List<Long> shopAttributeIds = shop.getProducts().stream()
+		    	.map(sp -> sp.getAttribute().getId())
+		    	.collect(Collectors.toList());
+			
+			System.out.println(shopAttributeIds);
+			
+			System.out.println(shopProduct.getNumberOfElements());
+			
+			shopProduct.forEach(product->{
+				List<Attribute> attributes = product.getVariation().getAttributes().stream()
+					.filter(attribute -> shopAttributeIds.contains(attribute.getId()))
+					.collect(Collectors.toList());
+				
+				product.getVariation().setAttributes(attributes);
+			});
+			
+			return shopProduct;
 		}
 		else {
 			throw new ResourceNotFoundException("User did not have Shop.");
 		}
 	}
+//	private boolean isAttributeInShopProduct(Attribute attribute, Long shopId) {
+//	    return 
+//	}
 
 	public void removeProduct(List<Long> productIds,String username) {
 		
@@ -153,17 +196,18 @@ public class ShopService {
 	}
 
 	public List<ShopProjection> findNearestShop(Double latitude, Double longitude, Long productId) {
+//		
+//		List<ShopProjection> shops = shopRep.findNearestShopWithProduct(
+//		        latitude, 
+//		        longitude,
+//		        productId
+//		    );
 		
-		List<ShopProjection> shops = shopRep.findNearestShopWithProduct(
-		        latitude, 
-		        longitude,
-		        productId
-		    );
+		List<ShopProjection> shops = new ArrayList<>();
 		
 		System.out.println(shops);
 		
 		return shops;
 	}
-
 	
 }

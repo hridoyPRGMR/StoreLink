@@ -1,13 +1,12 @@
 package com.storelink.model;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 import org.locationtech.jts.geom.Point;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,8 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -57,9 +55,8 @@ public class Shop {
 	@JoinColumn(name = "address_id", referencedColumnName = "id")
 	private Address address;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "shop_product", joinColumns = @JoinColumn(name = "shop_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
-	private Set<Product> products;
+	@OneToMany(mappedBy = "shop", cascade = CascadeType.ALL)
+	private List<ShopProduct> products;
 
 	@Column(length = 500)
 	private String profilePhotoUrl;

@@ -34,17 +34,20 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
 	
 	@Query("""
-			SELECT p FROM Shop s JOIN s.products p
-			WHERE s.id = :shopId
-			AND (:productName IS NULL OR p.name ILIKE CONCAT('%', :productName, '%'))
-			AND (:categoryId IS NULL OR p.category.id = :categoryId)
-			AND (:brandId IS NULL OR p.brand.id = :brandId)
-	""")
+		    SELECT sp.product FROM Shop s 
+		    JOIN s.products sp 
+		    JOIN sp.product p
+		    WHERE s.id = :shopId
+		    AND (:productName IS NULL OR p.name ILIKE CONCAT('%', :productName, '%'))
+		    AND (:categoryId IS NULL OR p.category.id = :categoryId)
+		    AND (:brandId IS NULL OR p.brand.id = :brandId)
+		""")
 	Page<ProductProjection> findShopProduct(
-            @Param("shopId") Long shopId,
-            @Param("productName") String productName,
-            @Param("categoryId") Integer categoryId,
-            @Param("brandId") Integer brandId,
-            Pageable pageable);
+		    @Param("shopId") Long shopId,
+		    @Param("productName") String productName,
+		    @Param("categoryId") Integer categoryId,
+		    @Param("brandId") Integer brandId,
+		    Pageable pageable);
+
 
 }
