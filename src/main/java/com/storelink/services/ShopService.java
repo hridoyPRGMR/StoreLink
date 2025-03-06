@@ -1,9 +1,11 @@
 package com.storelink.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,28 +77,44 @@ public class ShopService {
     		throw new ResourceNotFoundException("Store not exist for the user");
     	}
     	
+    	// extract attribute IDs from request
     	List<Long> attributeIds = req.stream().map(ShopProductDto::getAttributeId).collect(Collectors.toList());
+    	// fetch attributes from DB
     	List<Attribute> attributes = attributeRep.findAllById(attributeIds);
+    	
     	
 //    	Map attribute IDs to their corresponding Attribute objects
     	Map<Long,Attribute> attributeMap = attributes.stream().collect(Collectors.toMap(Attribute::getId, Function.identity()));
     	
-    	List<ShopProduct> shopProducts = new ArrayList<>();
+    	Set<Long> existingAttributeIds  = shopProdRep.findByShopId(shop.getId())
+    		.stream()
+    		.map(ShopProduct::getAttribute)
+    		.map(Attribute::getId)
+    		.collect(Collectors.toSet());
     	
-    	for(ShopProductDto spd:req) {
-    		Attribute attribute = attributeMap.get(spd.getAttributeId());
-    		  
-            if (attribute == null) {
-                throw new ResourceNotFoundException("Attribute not found for id: " + spd.getAttributeId());
+    	List<ShopProduct> shopProducts = new ArrayList<>();
+    	Set<Long> seenAttributes = new HashSet<>(); // To filter out duplicates in the request
+    	
+    	for (ShopProductDto spd : req) {
+            Long attrId = spd.getAttributeId();
+
+            // skip if attribute already exists in DB or if it's duplicated in request
+            if (existingAttributeIds.contains(attrId) || !seenAttributes.add(attrId)) {
+                continue;
             }
-            
-    		Product product = Optional.ofNullable(attribute.getVariation())
-    				.map(Variation::getProduct)
-    				.orElseThrow(() -> new ResourceNotFoundException("Product not found for attribute id: " + spd.getAttributeId()));
-    				
-    		 ShopProduct shopProduct = new ShopProduct(shop, product, attribute, spd.getStock());
-    	     shopProducts.add(shopProduct);
-    	}
+
+            Attribute attribute = attributeMap.get(attrId);
+            if (attribute == null) {
+                throw new ResourceNotFoundException("Attribute not found for id: " + attrId);
+            }
+
+            Product product = Optional.ofNullable(attribute.getVariation())
+                    .map(Variation::getProduct)
+                    .orElseThrow(() -> new ResourceNotFoundException("Product not found for attribute id: " + attrId));
+
+            ShopProduct shopProduct = new ShopProduct(shop, product, attribute, spd.getStock());
+            shopProducts.add(shopProduct);
+        }
     		
     	shopProdRep.saveAll(shopProducts);
 	}
@@ -162,10 +180,6 @@ public class ShopService {
 		    	.map(sp -> sp.getAttribute().getId())
 		    	.collect(Collectors.toList());
 			
-			System.out.println(shopAttributeIds);
-			
-			System.out.println(shopProduct.getNumberOfElements());
-			
 			shopProduct.forEach(product->{
 				List<Attribute> attributes = product.getVariation().getAttributes().stream()
 					.filter(attribute -> shopAttributeIds.contains(attribute.getId()))
@@ -180,9 +194,7 @@ public class ShopService {
 			throw new ResourceNotFoundException("User did not have Shop.");
 		}
 	}
-//	private boolean isAttributeInShopProduct(Attribute attribute, Long shopId) {
-//	    return 
-//	}
+
 
 	public void removeProduct(List<Long> productIds,String username) {
 		
@@ -208,6 +220,16 @@ public class ShopService {
 		System.out.println(shops);
 		
 		return shops;
+	}
+
+	public void updateProduct(long attributeId,int stock, String username) {
+		
+		long shopId = userServ.findByUsername(username).getShop().getId();
+		
+		ShopProduct shopProduct = shopProdRep.findByShopIdAndAttributeId(shopId,attributeId);
+		shopProduct.setStock(stock);
+		
+		shopProdRep.save(shopProduct);
 	}
 	
 }

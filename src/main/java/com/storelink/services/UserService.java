@@ -19,7 +19,10 @@ import com.storelink.repository.PermissionRepository;
 import com.storelink.repository.UserRepository;
 import com.storelink.specifications.UserSpecification;
 
+import lombok.AllArgsConstructor;
+
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private UserRepository userRep;
@@ -27,13 +30,7 @@ public class UserService {
     private RoleService roleServ;
     private PermissionRepository permRep;
 
-
-    public UserService(UserRepository userRep,RoleService roleServ,PermissionRepository permRep){
-        this.roleServ=roleServ;
-        this.userRep = userRep;
-        this.permRep = permRep;
-        this.passwordEncoder = new BCryptPasswordEncoder(12);
-    }
+    
     
     public boolean emailExist(String email) {    	
     	return userRep.existsByEmail(email);
@@ -59,7 +56,10 @@ public class UserService {
     public User saveUser(UserDto userDto,String role){
 
         User user =  toEntity(userDto);
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        user.setPassword(encodedPassword);
+        
         user.setRoles(Set.of(roleServ.findByName(role)));
 
         return userRep.save(user);
