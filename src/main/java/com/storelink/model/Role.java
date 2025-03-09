@@ -12,10 +12,12 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +26,7 @@ import lombok.Setter;
 @Table(name = "roles")
 public class Role {
 
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator="role_seq")
     @SequenceGenerator(name="role_seq",sequenceName="role_sequence",allocationSize=1)
     private long id;
@@ -35,4 +37,5 @@ public class Role {
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
 }
