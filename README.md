@@ -48,13 +48,15 @@ Follow these steps to set up the project locally:
    ```bash
    mvn clean install
    ```
-
-4. **Start the Application:**
+4. **Package the Application (JAR file):**
+  ```bash
+  mvn clean package -DskipTests
+  ```
+5. **Start the Application:**
    Using Docker:
    ```bash
    docker-compose up --build
    ```
-
 ---
 
 ## Usage
