@@ -209,18 +209,14 @@ public class ShopService {
 	}
 
 	public List<ShopProjection> findNearestShop(Double latitude, Double longitude, Long productId) {
-//		
-//		List<ShopProjection> shops = shopRep.findNearestShopWithProduct(
-//		        latitude, 
-//		        longitude,
-//		        productId
-//		    );
+	    
+		List<ShopProjection> shops = shopRep.findNearestShopWithProduct(latitude, longitude, productId);
 		
-		List<ShopProjection> shops = new ArrayList<>();
+		if(shops.isEmpty() || shops==null) {
+			throw new ResourceNotFoundException("Shop not found.");
+		}
 		
-		System.out.println(shops);
-		
-		return shops;
+	    return shops;
 	}
 
 	public void updateProduct(long attributeId,int stock, String username) {
