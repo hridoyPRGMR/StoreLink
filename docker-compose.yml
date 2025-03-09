@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgis/postgis
+    container_name: storelink-db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: storelink
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d storelink"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    container_name: storelink-adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  springboot:
+    build: .
+    container_name: sl_springboot_project
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/storelink
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=${DATABASE_PASSWORD}
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+    ports:
+      - "9090:9090"
+    depends_on:
+       db:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
