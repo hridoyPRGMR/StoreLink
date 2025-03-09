@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:latest:///testdb # Use TestContainers URL
+    username: testuser
+    password: testpass
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # Ensures tables are created/dropped per test run
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  sql:
+    init:
+      mode: always
+
+  test:
+    database:
+      replace: none # Prevents replacing with H2 (default behavior in tests)

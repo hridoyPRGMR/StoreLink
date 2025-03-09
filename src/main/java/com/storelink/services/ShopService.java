@@ -54,7 +54,8 @@ public class ShopService {
     }
 
     @Transactional
-    public Shop saveShop(ShopDto req, String username) {
+    public Shop saveShop(ShopDto req, String username) 
+    {
         Address address = addressRep.save(toEntity(req.getAddress()));
         Shop shop = toEntity(req);
         
