@@ -17,6 +17,7 @@ StoreLink is a secure and feature-rich system that provides JWT-based authentica
 - Users can create shops and add products
 - Search for the nearest shop that has the desired product
 - Support for Pagination and Filtering
+- Error Logging
 
 ---
 
